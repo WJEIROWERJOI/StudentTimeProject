@@ -1,0 +1,56 @@
+﻿@inject StudentService studentService
+@inject IToastService toastService
+<div class="form-group">
+    <EditForm Model="input" OnValidSubmit="Close">
+        <select class="form-control" @bind=@input>
+            @foreach (var student in students.OrderBy(s=>s.Name))
+            {
+                <option value=@student.Id>@($"{student.Name}({student.Id})")</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-primary mt-3">OK</button>
+        <button type="button" @onclick="Cancel" class="btn btn-secondary mt-3">Cancel</button>
+    </EditForm>
+</div>
+
+@code {
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    [Parameter]
+    public int ClassId { get; set; }
+    [SupplyParameterFromForm]
+    private int input { get; set; }
+    List<Student> students = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await studentService.GetAllStudentsAsync();
+        if (result.Success && result.Data is not null)
+        {
+            students = result.Data;
+        }
+        else
+        {
+            toastService.ShowError(result.Message!);
+        }
+
+    
+    }
+
+    async Task Close()
+    {
+        var result = await studentService.AddStudentToClass(ClassId, input);
+        if (result.Success)
+        {
+            await BlazoredModal.CloseAsync(ModalResult.Ok(true));
+        }
+        else
+        {
+            await Cancel();
+        }
+
+    }
+
+    async Task Cancel() => await BlazoredModal.CancelAsync();
+
+}

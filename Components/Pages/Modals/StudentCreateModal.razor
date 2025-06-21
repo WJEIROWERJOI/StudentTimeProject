@@ -1,0 +1,80 @@
+﻿@inject StudentService studentService
+
+<div class="form-group">
+
+    <EditForm Model="input" OnValidSubmit="Close">
+        <DataAnnotationsValidator/>
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="input.Name" class="form-control" placeholder="학생이름" />
+            <label>학생이름</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="input.Description" class="form-control" placeholder="Description" />
+            <label>학생 설명</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputSelect class="form-select" @bind-Value=@input.StudentGrade>
+                @foreach (StudentGrade group in Enum.GetValues(typeof(StudentGrade)))
+                {
+                    <option value="@group">@group</option>
+                }
+            </InputSelect>
+            <label>학년</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputSelect TValue=int? class="form-select" @bind-Value=@input.ClassId>
+                <option value="">미정</option> 
+                @foreach (var cla in classes)
+                {
+                    <option value="@cla.Id">@cla.Name</option>
+                }
+            </InputSelect>
+            <label>학생 반</label>
+        </div>
+
+
+
+        <button type="submit" class="btn btn-primary mt-3">OK</button>
+        <button type="button" @onclick="Cancel" class="btn btn-secondary mt-3">Cancel</button>
+    </EditForm>
+
+</div>
+
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    InputModel input { get; set; } = new();
+
+    List<StudentClass> classes = new();
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await studentService.GetAllClassAsync();
+        if (result.Success && result.Data is not null)
+        {
+            classes = result.Data;
+        }
+    }
+
+    protected sealed class InputModel
+    {
+        [Required(ErrorMessage ="No Name No Student")]
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public StudentGrade StudentGrade { get; set; }
+        public int? ClassId { get; set; }
+    }
+
+    async Task Close()
+    {
+        await studentService.CreateStudent(input.Name, input.Description, input.StudentGrade, input.ClassId);
+        await BlazoredModal.CloseAsync(ModalResult.Ok(true));
+    }
+
+    async Task Cancel() => await BlazoredModal.CancelAsync();
+}
+

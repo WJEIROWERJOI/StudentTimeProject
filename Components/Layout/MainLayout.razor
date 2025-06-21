@@ -1,24 +1,79 @@
-﻿@inherits LayoutComponentBase
+﻿@using Blazored.Toast.Configuration
+@inherits LayoutComponentBase
 
-<div class="page">
-    <header class="bg-light border-bottom py-2 px-4">
-        <NavMenu />
+<BlazoredToasts Position="ToastPosition.BottomRight" Timeout="10" IconType="IconType.Material" ErrorIcon="😓"
+                InfoIcon="😊" SuccessIcon="🎉" WarningIcon="⚠️" ShowProgressBar="@true" ShowCloseButton="@true" MaxToastCount="3">
+    <CloseButtonContent>
+        <div>
+            <span class="myCloseButtonStyleClass">&times;</span>
+        </div>
+    </CloseButtonContent>
+</BlazoredToasts>
+
+<div class="layout-wrapper d-flex flex-column min-vh-100">
+
+    <!-- 상단 네비게이션 -->
+    <header class="border-bottom bg-white shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center py-3">
+            <a href="/" class="text-dark text-decoration-none fs-4 fw-bold">
+                StudentTime
+            </a>
+            <nav class="d-flex gap-4">
+                <NavLink href="TimeTable/Student?" class="nav-link" activeClass="active" Match="NavLinkMatch.Prefix">Student</NavLink>
+                <NavLink href="TimeTable/Class" class="nav-link" activeClass="active" Match="NavLinkMatch.All">Class</NavLink>
+                <NavLink href="TimeTable/Time?" class="nav-link" activeClass="active" Match="NavLinkMatch.Prefix">Time</NavLink>
+
+            </nav>
+        </div>
     </header>
 
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+    <!-- 본문 -->
+    <main class="flex-grow-1 bg-light py-4">
+        <div class="container">
             @Body
-        </article>
+        </div>
     </main>
+
+    <!-- 푸터 -->
+    <footer class="bg-white border-top text-center text-muted py-3 small">
+        ⓒ 2025 StudentTimeProject
+    </footer>
 </div>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        background-color: #ffffff;
+        font-family: 'Segoe UI', sans-serif;
+        color: #212529;
+    }
+
+    .nav-link {
+        color: #495057;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+        .nav-link:hover {
+            color: #212529;
+        }
+
+        .nav-link.active {
+            font-weight: 600;
+            border-bottom: 2px solid #0d6efd;
+            color: #0d6efd;
+        }
+
+    .layout-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    main {
+        flex-grow: 1;
+    }
+</style>

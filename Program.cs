@@ -1,27 +1,34 @@
-using StudentTimeProject.Components;
+using StudentTimeProject.Extention;
+using StudentTimeProject.Data;
+using StudentTimeProject.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.ConfigureDatabase(builder.Configuration);
+builder.Services.AddAppServices();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+app.ConfigureExceptionHandler();
+app.ConfigureMiddleware();
+
+
+using (var scope = app.Services.CreateScope())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+
+        await Seeding.SeedingBoard(context);
+    }
+    catch (Exception ex)
+    {   //시딩이 잘못된 경우우
+        Console.WriteLine($"시딩 중 에러 발생: {ex.Message}");
+    }
 }
 
-app.UseHttpsRedirection();
-
-app.UseStaticFiles();
-app.UseAntiforgery();
-
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
-
 app.Run();
+
+
