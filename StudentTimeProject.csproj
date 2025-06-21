@@ -17,4 +17,5 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.14" />
 	</ItemGroup>
+	<ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://json.schemastore.org/aspire-8.0.json" /></VisualStudio></ProjectExtensions>
 	</Project>

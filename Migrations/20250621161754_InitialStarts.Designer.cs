@@ -11,7 +11,7 @@ using StudentTimeProject.Data;
 namespace StudentTimeProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250621161252_InitialStarts")]
+    [Migration("20250621161754_InitialStarts")]
     partial class InitialStarts
     {
         /// <inheritdoc />
